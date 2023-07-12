@@ -2,6 +2,7 @@ package com.controller;
 
 import javax.validation.Valid;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -12,9 +13,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.bean.UserBean;
+import com.dao.UserDao;
 
 @Controller
 public class SessionController {
+
+	@Autowired
+	UserDao userDao;
 
 	@RequestMapping(value = "signup", method = RequestMethod.GET)
 	public String signup(Model model) {
@@ -37,13 +42,15 @@ public class SessionController {
 		// get
 		// valid
 		model.addAttribute("user", user);
-  
+
 		if (result.hasErrors()) {
 			System.out.println(result.getAllErrors());
 			return "Signup";
 		} else {
 			// bean
 			// dao -> db
+			user.setRole("USER");
+			userDao.addUser(user);
 			System.out.println(user.getEmail());
 			return "Home";// jsp
 		}
