@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.bean.LoginBean;
 import com.bean.UserBean;
 import com.dao.UserDao;
 
@@ -54,6 +55,17 @@ public class SessionController {
 			System.out.println(user.getEmail());
 			return "Home";// jsp
 		}
+	}
+
+	@PostMapping("/authenticate")
+	public String authenticate(LoginBean login) { // email and password
+		UserBean user = userDao.getUserByEmail(login.getEmail());
+		if (user != null) {
+			if (user.getPassword().equals(login.getPassword())) {
+				return "Home";
+			}
+		}
+		return "Login";
 	}
 	// method -> model->
 }
