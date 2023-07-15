@@ -11,6 +11,6 @@
 	<br> Email : ${user.email }
 	<br> Password :${user.password }
 	<br>
-
+<a href="logout">Logout</a>
 </body>
 </html>

@@ -1,5 +1,7 @@
 package com.dao;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -21,11 +23,16 @@ public class UserDao {
 	public UserBean getUserByEmail(String email) {
 		// to read single user data we have queryForObject
 		try {
-		return stmt.queryForObject("select * from users where email = ? ", new BeanPropertyRowMapper<UserBean>(),
-				new Object[] { email });
-		}catch(Exception e) {
-			
+			return stmt.queryForObject("select * from users where email = ? ",
+					new BeanPropertyRowMapper<UserBean>(UserBean.class), new Object[] { email });
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return null;
 	}
+
+	public List<UserBean> getAllUsers() {
+		return stmt.query("select * from users", new BeanPropertyRowMapper<UserBean>(UserBean.class));
+	}
+
 }

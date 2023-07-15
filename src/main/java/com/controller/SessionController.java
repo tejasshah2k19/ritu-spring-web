@@ -1,8 +1,10 @@
 package com.controller;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -22,6 +24,9 @@ public class SessionController {
 	@Autowired
 	UserDao userDao;
 
+	@Autowired
+	BCryptPasswordEncoder encoder;
+
 	@RequestMapping(value = "signup", method = RequestMethod.GET)
 	public String signup(Model model) {
 		model.addAttribute("user", new UserBean());
@@ -29,7 +34,8 @@ public class SessionController {
 	}
 
 	@RequestMapping(value = "login") // defult it will take get
-	public String login() {
+	public String login(Model model) {
+		model.addAttribute("user", new LoginBean());
 		return "Login";
 	}
 
@@ -51,6 +57,8 @@ public class SessionController {
 			// bean
 			// dao -> db
 			user.setRole("USER");
+
+			user.setPassword(encoder.encode(user.getPassword()));
 			userDao.addUser(user);
 			System.out.println(user.getEmail());
 			return "Home";// jsp
@@ -58,14 +66,38 @@ public class SessionController {
 	}
 
 	@PostMapping("/authenticate")
-	public String authenticate(LoginBean login) { // email and password
+	public String authenticate(LoginBean login, Model model, HttpSession session) { // email and password
 		UserBean user = userDao.getUserByEmail(login.getEmail());
 		if (user != null) {
-			if (user.getPassword().equals(login.getPassword())) {
-				return "Home";
+			System.out.println(" Email Found " + login.getEmail());
+
+			if (encoder.matches(login.getPassword(), user.getPassword())) {
+				session.setAttribute("user", user);
+
+				if (user.getRole() == null) {
+					model.addAttribute("user", login);
+					return "Login";
+				} else if (user.getRole().equals("USER")) {
+					return "Home";
+
+				} else if (user.getRole().contentEquals("ADMIN")) {
+					return "redirect:/dashboard"; // do not open jsp - redirect to dashboard url 
+				}
 			}
+		} else {
+			System.out.println("No Email Found " + login.getEmail());
+
 		}
+		model.addAttribute("user", login);
 		return "Login";
 	}
 	// method -> model->
+
+
+	@GetMapping("logout")
+	public String logout(HttpSession session) {
+		session.invalidate();
+		return "Login";
+	}
+
 }
