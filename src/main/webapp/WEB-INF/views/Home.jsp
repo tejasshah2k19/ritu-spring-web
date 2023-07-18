@@ -10,6 +10,7 @@
 	FirstName : ${user.firstName}
 	<br> Email : ${user.email }
 	<br> Password :${user.password }
+	<br> Profile : <img src="${user.profilePath }"/>
 	<br>
 <a href="logout">Logout</a>
 </body>

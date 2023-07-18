@@ -3,6 +3,7 @@ package com.bean;
 import javax.validation.constraints.NotBlank;
 
 import org.hibernate.validator.constraints.Length;
+import org.springframework.web.multipart.MultipartFile;
 
 public class UserBean {
 
@@ -17,6 +18,8 @@ public class UserBean {
 	String role; // user
 	String hobby;
 	String country;
+	MultipartFile profile;
+	String profilePath;
 
 	public Integer getUserId() {
 		return userId;
@@ -82,4 +85,21 @@ public class UserBean {
 		this.country = country;
 	}
 
+	public MultipartFile getProfile() {
+		return profile;
+	}
+
+	public void setProfile(MultipartFile profile) {
+		this.profile = profile;
+	}
+
+	public String getProfilePath() {
+		return profilePath;
+	}
+
+	public void setProfilePath(String profilePath) {
+		this.profilePath = profilePath;
+	}
+
+	
 }

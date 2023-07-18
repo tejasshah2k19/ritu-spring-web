@@ -21,7 +21,7 @@
 		<input type="submit" value="Signup"/>
 	</form> --%>
 	<h2>Signup</h2>
-	<s:form action="saveuser" method="post" modelAttribute="user">
+	<s:form action="saveuser" method="post" enctype="multipart/form-data" modelAttribute="user">
 	
 		FirstName: <s:input path="firstName" />
 		<s:errors path="firstName" cssClass="error"></s:errors>
@@ -37,6 +37,10 @@
 
 		<br>
 		<br>
+		
+		Profile : <input type="file" name="profile" />
+		<br><br>
+		
 		<input type="submit" value="Signup" />
 
 

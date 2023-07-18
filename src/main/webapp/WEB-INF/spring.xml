@@ -41,4 +41,11 @@
 		class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"
 		id="encoder"></bean>
 
+	<bean
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver"
+		id="multipartResolver">
+		<property name="maxUploadSize" value="100000" />
+	</bean>
+
+ 	<mvc:resources location="/resources/" mapping="/resources/**"></mvc:resources>
 </beans>

@@ -20,7 +20,7 @@
 		Password: <input type="password" name="password"/><br><br>
 		<input type="submit" value="Signup"/>
 	</form> --%>
-	<h2>Signup</h2>
+	<h2>Login</h2>
 	<s:form action="authenticate" method="post" modelAttribute="user">
 	 
 	  	Email: <s:input path="email" />

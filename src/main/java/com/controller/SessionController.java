@@ -1,8 +1,11 @@
 package com.controller;
 
+import java.io.File;
+
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -13,10 +16,13 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.bean.LoginBean;
 import com.bean.UserBean;
 import com.dao.UserDao;
+import com.google.protobuf.DescriptorProtos.FileOptions;
 
 @Controller
 public class SessionController {
@@ -57,8 +63,23 @@ public class SessionController {
 			// bean
 			// dao -> db
 			user.setRole("USER");
-
 			user.setPassword(encoder.encode(user.getPassword()));
+			try {
+				String masterPath = "D:\\Tejas Shah\\Dropbox\\Tejas Shah's Workplace\\work\\ritu-spring-web\\src\\main\\webapp\\resources\\images";
+
+				File f = new File(masterPath, user.getEmail());// email folder
+				f.mkdir();
+
+				File f2 = new File(f, user.getProfile().getOriginalFilename());
+
+				FileUtils.writeByteArrayToFile(f2, user.getProfile().getBytes());
+			
+				user.setProfilePath("resources/images/"+user.getEmail()+"/"+user.getProfile().getOriginalFilename()); 
+			
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
 			userDao.addUser(user);
 			System.out.println(user.getEmail());
 			return "Home";// jsp
@@ -81,7 +102,7 @@ public class SessionController {
 					return "Home";
 
 				} else if (user.getRole().contentEquals("ADMIN")) {
-					return "redirect:/dashboard"; // do not open jsp - redirect to dashboard url 
+					return "redirect:/dashboard"; // do not open jsp - redirect to dashboard url
 				}
 			}
 		} else {
@@ -93,11 +114,29 @@ public class SessionController {
 	}
 	// method -> model->
 
-
 	@GetMapping("logout")
 	public String logout(HttpSession session) {
 		session.invalidate();
-		return "Login";
+		return "redirect:/login";
+	}
+
+	@GetMapping("/profile")
+	public String profile() {
+		return "Profile";
+	}
+
+	@PostMapping("/profile")
+	public String profileSave(@RequestParam("profile") MultipartFile file) {
+		String masterPath = "D:\\Tejas Shah\\Dropbox\\Tejas Shah's Workplace\\work\\ritu-spring-web\\src\\main\\resources\\images";
+
+		try {
+			File f = new File(masterPath, file.getOriginalFilename());
+			FileUtils.writeByteArrayToFile(f, file.getBytes());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		System.out.println(file.getOriginalFilename());
+		return "redirect:/login";
 	}
 
 }
